@@ -33,7 +33,7 @@ export default function Navigation({ currentPage, setCurrentPage, cart }: Naviga
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-primary/10 shadow-lg">
+      <nav className="sticky top-0 z-50 bg-background/80 dark:bg-background/60 backdrop-blur-lg border-b border-border/40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">

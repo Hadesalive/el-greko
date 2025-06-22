@@ -66,7 +66,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black/60" />
+          <div className="absolute inset-0 bg-black/30 dark:bg-black/60" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center pb-20 sm:pb-32">
@@ -95,7 +95,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
               <Button
                 variant="outline"
                 size="lg"
-                className="border-2 border-white/80 text-white hover:bg-white hover:text-primary px-10 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-white/20 transition-all duration-300"
+                className="border-2 border-white/80 text-white bg-white/10 backdrop-blur-sm hover:bg-white hover:text-primary px-10 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-white/20 transition-all duration-300"
                 onClick={() => setCurrentPage("menu")}
               >
                 <BookOpen className="w-5 h-5 mr-3" />
@@ -132,16 +132,16 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
       <section className="py-16 sm:py-20 bg-background relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-widest text-red-500 flex items-center justify-center gap-2">
+            <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-widest text-primary flex items-center justify-center gap-2">
               <span>🔥</span> Limited Time Only <span>🔥</span>
             </h2>
-            <h3 className="text-4xl sm:text-5xl font-black text-white mt-2 mb-4">Special Offers</h3>
+            <h3 className="text-4xl sm:text-5xl font-black mt-2 mb-4">Special Offers</h3>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {getSpecialOffers().map((item) => (
               <Card
                 key={item.id}
-                className="group overflow-hidden border-2 hover:border-red-500 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 bg-gradient-to-br from-background to-red-50/10 shadow-lg"
+                className="group overflow-hidden border-2 hover:border-primary/80 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 bg-gradient-to-br from-background to-primary/10 shadow-lg"
               >
                 <div className="relative overflow-hidden">
                   <Image
@@ -152,7 +152,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
                     className="w-full h-48 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    <Badge className="bg-red-500 text-white font-bold text-xs">🔥 Special</Badge>
+                    <Badge className="bg-primary text-primary-foreground font-bold text-xs">Special Offer</Badge>
                     {item.vegetarian && (
                       <Badge className="bg-green-500 text-white font-bold text-xs">🌱 Vegetarian</Badge>
                     )}
@@ -193,7 +193,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
-                          <span className="text-xl sm:text-2xl font-bold text-red-500">
+                          <span className="text-xl sm:text-2xl font-bold text-primary">
                             {formatPrice(item.price * getQuantity(item.id))}
                           </span>
                           {getQuantity(item.id) > 1 && (
@@ -233,7 +233,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
                       className={`w-full font-bold py-3 rounded-full transition-all duration-300 hover:scale-105 ${
                         cartFeedback[item.id]
                           ? "bg-green-600 hover:bg-green-700 text-white"
-                          : "bg-red-500 hover:bg-red-600 text-white"
+                          : "bg-primary hover:bg-primary/90 text-primary-foreground"
                       }`}
                       onClick={() => handleAddToCart(item)}
                     >
