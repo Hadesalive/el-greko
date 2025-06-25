@@ -15,10 +15,12 @@ interface CheckoutPageProps {
 }
 
 export default function CheckoutPage({ cart }: CheckoutPageProps) {
-  const [customerInfo, setCustomerInfo] = useState({
+  const [orderType, setOrderType] = useState("delivery") // 'delivery' or 'dine-in'
+    const [customerInfo, setCustomerInfo] = useState({
     name: "",
     phone: "",
-    address: "",
+        address: "",
+    tableNumber: "",
     notes: "",
   })
 
@@ -26,7 +28,7 @@ export default function CheckoutPage({ cart }: CheckoutPageProps) {
     return `Le ${price.toLocaleString()}`
   }
 
-  const handleWhatsAppOrder = () => {
+    const handleWhatsAppOrder = () => {
     const orderDetails = cart
       .map((item) => `${item.name} x${item.quantity} - ${formatPrice(item.price * item.quantity)}`)
       .join("\n")
@@ -34,12 +36,13 @@ export default function CheckoutPage({ cart }: CheckoutPageProps) {
     const total = getCartTotal(cart) + (getCartTotal(cart) >= 100000 ? 0 : 10000)
     const deliveryFee = getCartTotal(cart) >= 100000 ? "FREE" : formatPrice(10000)
 
-    const message = `🍽️ *El Greko Order* 🇬🇷
+        const message = `🍽️ *El Greko Order* 🇬🇷
+
+*Order Type: ${orderType === "delivery" ? "Delivery" : "Dine-In"}*
 
 📝 *Customer Details:*
 Name: ${customerInfo.name}
-Phone: ${customerInfo.phone}
-Address: ${customerInfo.address}
+${orderType === "delivery" ? `Phone: ${customerInfo.phone}\nAddress: ${customerInfo.address}` : `Table Number: ${customerInfo.tableNumber}`}
 ${customerInfo.notes ? `Notes: ${customerInfo.notes}` : ""}
 
 🛒 *Order Details:*
@@ -47,7 +50,7 @@ ${orderDetails}
 
 💰 *Payment Summary:*
 Subtotal: ${formatPrice(getCartTotal(cart))}
-Delivery: ${deliveryFee}
+${orderType === "delivery" ? `Delivery: ${deliveryFee}` : ''}
 *Total: ${formatPrice(total)}*
 
 Thank you for choosing El Greko! 🙏`
@@ -68,7 +71,11 @@ Thank you for choosing El Greko! 🙏`
           {/* Customer Information */}
           <Card className="border-2 border-primary/20 bg-gradient-to-br from-background to-primary/5 shadow-lg">
             <CardContent className="p-4 sm:p-6">
-              <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Customer Information 👤</h2>
+                            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Customer Information 👤</h2>
+              <div className="flex space-x-4 mb-4">
+                <Button onClick={() => setOrderType("delivery")} variant={orderType === "delivery" ? "default" : "outline"}>Delivery</Button>
+                <Button onClick={() => setOrderType("dine-in")} variant={orderType === "dine-in" ? "default" : "outline"}>Dine In</Button>
+              </div>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Full Name *</label>
@@ -88,15 +95,38 @@ Thank you for choosing El Greko! 🙏`
                     className="border-2 border-primary/20 focus:border-primary text-base"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Delivery Address *</label>
-                  <Input
-                    placeholder="Enter your full address"
-                    value={customerInfo.address}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
-                    className="border-2 border-primary/20 focus:border-primary text-base"
-                  />
-                </div>
+                                {orderType === "delivery" ? (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Phone Number *</label>
+                      <Input
+                        placeholder="e.g., 077 123 456"
+                        value={customerInfo.phone}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                        className="border-2 border-primary/20 focus:border-primary text-base"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Delivery Address *</label>
+                      <Input
+                        placeholder="Enter your full address"
+                        value={customerInfo.address}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
+                        className="border-2 border-primary/20 focus:border-primary text-base"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Table Number *</label>
+                    <Input
+                      placeholder="Enter your table number"
+                      value={customerInfo.tableNumber}
+                      onChange={(e) => setCustomerInfo({ ...customerInfo, tableNumber: e.target.value })}
+                      className="border-2 border-primary/20 focus:border-primary text-base"
+                    />
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium mb-2">Special Notes (Optional)</label>
                   <Input
@@ -131,10 +161,12 @@ Thank you for choosing El Greko! 🙏`
                   <span>Subtotal:</span>
                   <span className="font-bold">{formatPrice(getCartTotal(cart))}</span>
                 </div>
-                <div className="flex justify-between text-sm sm:text-base">
-                  <span>Delivery Fee:</span>
-                  <span className="font-bold">{getCartTotal(cart) >= 100000 ? "FREE 🎉" : formatPrice(10000)}</span>
-                </div>
+                                {orderType === "delivery" && (
+                  <div className="flex justify-between text-sm sm:text-base">
+                    <span>Delivery Fee:</span>
+                    <span className="font-bold">{getCartTotal(cart) >= 100000 ? "FREE 🎉" : formatPrice(10000)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-base sm:text-xl font-bold border-t pt-2">
                   <span>Total:</span>
                   <span className="text-primary">
@@ -156,8 +188,8 @@ Thank you for choosing El Greko! 🙏`
               <Button
                 size="lg"
                 className="w-full bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-4 text-base sm:text-lg font-bold rounded-full transition-all duration-300 hover:scale-105 mt-6"
-                onClick={handleWhatsAppOrder}
-                disabled={!customerInfo.name || !customerInfo.phone || !customerInfo.address}
+                                onClick={handleWhatsAppOrder}
+                disabled={!customerInfo.name || (orderType === 'delivery' && (!customerInfo.phone || !customerInfo.address)) || (orderType === 'dine-in' && !customerInfo.tableNumber)}
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
                 Send Order via WhatsApp 📱

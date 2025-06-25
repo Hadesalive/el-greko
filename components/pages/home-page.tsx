@@ -5,9 +5,12 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { FoodCard } from "@/components/shared/food-card";
+import { FoodItemModal } from "@/components/shared/food-item-modal";
 import { Phone, ShoppingCart, Clock, Star, Plus, Minus, Users, Utensils, Leaf, Truck, ChefHat, Award, BookOpen } from "lucide-react"
 import { getPopularFoods, type FoodItem, getSpecialOffers } from "@/lib/food-database"
-import { addToCart, type CartItem } from "@/lib/cart-storage"
+import { addToCart, getCartFromStorage, type CartItem } from "@/lib/cart-storage"
+import { ChefRecommender } from '@/components/features/chef-recommender'
 
 interface HomePageProps {
   currentPage: string
@@ -19,6 +22,18 @@ interface HomePageProps {
 export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProps) {
   const [quantities, setQuantities] = useState<{ [key: number]: number }>({})
   const [cartFeedback, setCartFeedback] = useState<{ [key: number]: boolean }>({})
+  const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewDetails = (foodItem: FoodItem) => {
+    setSelectedFood(foodItem);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedFood(null);
+    setIsModalOpen(false);
+  };
 
   const updateQuantity = (id: number, change: number) => {
     setQuantities((prev) => ({
@@ -55,8 +70,26 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
 
   return (
     <div className="min-h-screen bg-background">
+      <ChefRecommender onViewDetails={handleViewDetails} />
+
+      {selectedFood && (
+        <FoodItemModal
+          item={selectedFood}
+          onClose={handleCloseModal}
+          onAddToCart={(item: FoodItem) => {
+            addToCart(item); // Quantity defaults to 1
+            setCart(getCartFromStorage()); // Update the state from storage
+            setCartFeedback({ [item.id]: true });
+            setTimeout(() => setCartFeedback({}), 2000);
+            handleCloseModal();
+          }}
+          cartFeedback={cartFeedback}
+          onViewDetails={handleViewDetails}
+        />
+      )}
+
       {/* Modern Hero Section */}
-      <section className="relative h-screen overflow-hidden">
+      <section className="relative overflow-hidden">
         {/* Hero Image with Theme Support */}
         <div className="absolute inset-0">
           <Image
@@ -69,21 +102,21 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
           <div className="absolute inset-0 bg-black/30 dark:bg-black/60" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center pb-20 sm:pb-32">
-          <div className="text-center space-y-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20 pb-12 sm:pt-24 sm:pb-16">
+          <div className="text-center space-y-4">
             {/* Main Headline */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white">
+            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
               The Authentic Taste of Greece
               <span className="block text-primary mt-2">Delivered to Your Door</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto">
               Experience traditional Greek cuisine made with the freshest ingredients. Perfect for any occasion.
             </p>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
+            <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:justify-center sm:items-center mt-4">
               <Button
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-primary/30 transition-all duration-300"
@@ -104,7 +137,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
             </div>
 
             {/* Stats Grid */}
-            <div className="max-w-4xl mx-auto pt-8">
+            <div className="max-w-4xl mx-auto pt-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div className="backdrop-blur-sm bg-white/10 p-4 rounded-lg">
                   <h3 className="text-2xl sm:text-3xl font-bold text-white">15min</h3>
@@ -190,7 +223,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
                           <span className="text-xl sm:text-2xl font-bold text-primary">
@@ -316,7 +349,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
                           <span className="text-xl sm:text-2xl font-bold text-primary">

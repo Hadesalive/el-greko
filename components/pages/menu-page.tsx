@@ -59,10 +59,15 @@ export default function MenuPage({ cart, setCart }: MenuPageProps) {
 
   const categories = [
     { id: "all", label: "🍽️ All Items", emoji: "🍽️" },
-    { id: "starters", label: "🥗 Starters", emoji: "🥗" },
-    { id: "mains", label: "🍖 Mains", emoji: "🍖" },
-    { id: "desserts", label: "🍯 Desserts", emoji: "🍯" },
+    { id: "salads", label: "🥗 Salad", emoji: "🥗" },
+    { id: "brunch", label: "🍖 Brunch", emoji: "🍖" },
+    { id: "pizza", label: "🍕 Pizza", emoji: "🍕"},
+    { id: "sandwich", label: "🥪 Sandwich", emoji: "🥪"},
+    { id: "burger", label: "🍔 Burger", emoji: "🍔"},
+    { id: "dessert", label: "🍯 Desserts", emoji: "🍯" },
+    { id: "fried-chicken", label: "🍗 Fried Chicken", emoji: "🍗" },
     { id: "drinks", label: "🥤 Drinks", emoji: "🥤" },
+
   ]
 
   return (
