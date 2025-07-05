@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes fall {
+  to {
+    transform: translateY(calc(100vh + 100px)) rotate(720deg);
+  }
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -12,11 +12,22 @@ import AboutPage from "@/components/pages/about-page"
 import ContactPage from "@/components/pages/contact-page"
 import GalleryPage from "@/components/pages/gallery-page"
 import { getCartFromStorage, type CartItem } from "@/lib/cart-storage"
+import { useKonamiCode } from "@/hooks/useKonamiCode"
+import { Confetti } from "@/components/features/confetti"
+import { SecretMessage } from "@/components/features/secret-message"
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home")
   const [cart, setCart] = useState<CartItem[]>([])
+  const [showConfetti, setShowConfetti] = useState(false)
   const { theme } = useTheme()
+
+  // Easter egg: Konami Code (↑ ↑ ↓ ↓ ← → ← → B A)
+  const { isActivated } = useKonamiCode(() => {
+    setShowConfetti(true)
+    // Play a sound or show a message here if you want!
+    setTimeout(() => setShowConfetti(false), 5000)
+  })
 
   useEffect(() => {
     setCart(getCartFromStorage())
@@ -45,6 +56,8 @@ export default function App() {
       {currentPage === "contact" && <ContactPage {...pageProps} />}
       {currentPage === "gallery" && <GalleryPage {...pageProps} />}
       <Footer {...pageProps} />
+      <Confetti isActive={showConfetti} />
+      <SecretMessage isActive={showConfetti} />
     </div>
   )
 }
