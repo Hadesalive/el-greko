@@ -11,6 +11,8 @@ import { Phone, ShoppingCart, Clock, Star, Plus, Minus, Users, Utensils, Leaf, T
 import { getPopularFoods, type FoodItem, getSpecialOffers } from "@/lib/food-database"
 import { addToCart, getCartFromStorage, type CartItem } from "@/lib/cart-storage"
 import { ChefRecommender } from '@/components/features/chef-recommender'
+import MoodFoodPicker from '@/components/features/mood-food-picker'
+import Confetti from '@/components/ui/confetti'
 
 interface HomePageProps {
   currentPage: string
@@ -24,6 +26,7 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
   const [cartFeedback, setCartFeedback] = useState<{ [key: number]: boolean }>({})
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const handleViewDetails = (foodItem: FoodItem) => {
     setSelectedFood(foodItem);
@@ -57,8 +60,12 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
     )
     setCart(updatedCart)
 
-    // Show feedback
+    // Show feedback with Greek celebration
     setCartFeedback((prev) => ({ ...prev, [item.id]: true }))
+    
+    // Trigger confetti celebration!
+    setShowConfetti(true)
+    
     setTimeout(() => {
       setCartFeedback((prev) => ({ ...prev, [item.id]: false }))
     }, 2000)
@@ -66,6 +73,19 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
 
   const formatPrice = (price: number) => {
     return `Le ${price.toLocaleString()}`
+  }
+
+  const greekSuccessMessages = [
+    "Opa! Added! 🎉",
+    "Yamas! In cart! 🥳", 
+    "Kalimera! Added! ☀️",
+    "Efharisto! Done! 🙏",
+    "Bravo! Added! 👏",
+    "Zorba approved! 💃"
+  ]
+
+  const getRandomGreekMessage = () => {
+    return greekSuccessMessages[Math.floor(Math.random() * greekSuccessMessages.length)]
   }
 
   return (
@@ -160,6 +180,12 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
           </div>
         </div>
       </section>
+
+      {/* Mood Food Picker Section */}
+      <MoodFoodPicker 
+        onViewDetails={handleViewDetails}
+        onAddToCart={handleAddToCart}
+      />
 
       {/* Special Offers Section (now first, using food card design) */}
       <section className="py-16 sm:py-20 bg-background relative overflow-hidden">
@@ -265,13 +291,13 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
                     <Button
                       className={`w-full font-bold py-3 rounded-full transition-all duration-300 hover:scale-105 ${
                         cartFeedback[item.id]
-                          ? "bg-green-600 hover:bg-green-700 text-white"
+                          ? "bg-green-600 hover:bg-green-700 text-white animate-pulse"
                           : "bg-primary hover:bg-primary/90 text-primary-foreground"
                       }`}
                       onClick={() => handleAddToCart(item)}
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />
-                      {cartFeedback[item.id] ? "Added! ✅" : "Add to Cart 🛒"}
+                      {cartFeedback[item.id] ? getRandomGreekMessage() : "Add to Cart 🛒"}
                     </Button>
                   </div>
                 </CardContent>
@@ -391,13 +417,13 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
                     <Button
                       className={`w-full font-bold py-3 rounded-full transition-all duration-300 hover:scale-105 ${
                         cartFeedback[item.id]
-                          ? "bg-green-600 hover:bg-green-700 text-white"
+                          ? "bg-green-600 hover:bg-green-700 text-white animate-pulse"
                           : "bg-primary hover:bg-primary/90 text-primary-foreground"
                       }`}
                       onClick={() => handleAddToCart(item)}
                     >
                       <ShoppingCart className="w-4 h-4 mr-2" />
-                      {cartFeedback[item.id] ? "Added! ✅" : "Add to Cart 🛒"}
+                      {cartFeedback[item.id] ? getRandomGreekMessage() : "Add to Cart 🛒"}
                     </Button>
                   </div>
                 </CardContent>
@@ -575,6 +601,12 @@ export default function HomePage({ setCurrentPage, cart, setCart }: HomePageProp
           </div>
         </div>
       </section>
+      
+      {/* Confetti celebration */}
+      <Confetti 
+        isActive={showConfetti} 
+        onComplete={() => setShowConfetti(false)} 
+      />
     </div>
   )
 }
