@@ -8,13 +8,22 @@ export interface CartItem {
 
 export const getCartFromStorage = (): CartItem[] => {
   if (typeof window === "undefined") return []
-  const cart = localStorage.getItem("elgreko-cart")
-  return cart ? JSON.parse(cart) : []
+  try {
+    const cart = localStorage.getItem("elgreko-cart")
+    return cart ? JSON.parse(cart) : []
+  } catch (error) {
+    console.warn("Failed to get cart from localStorage:", error)
+    return []
+  }
 }
 
 export const saveCartToStorage = (cart: CartItem[]) => {
   if (typeof window === "undefined") return
-  localStorage.setItem("elgreko-cart", JSON.stringify(cart))
+  try {
+    localStorage.setItem("elgreko-cart", JSON.stringify(cart))
+  } catch (error) {
+    console.warn("Failed to save cart to localStorage:", error)
+  }
 }
 
 export const addToCart = (item: { id: number; name: string; price: number; image: string }, quantity = 1) => {
@@ -54,8 +63,12 @@ export const updateCartQuantity = (id: number, quantity: number) => {
 }
 
 export const clearCart = () => {
-  if (typeof window === "undefined") return
-  localStorage.removeItem("elgreko-cart")
+  if (typeof window === "undefined") return []
+  try {
+    localStorage.removeItem("elgreko-cart")
+  } catch (error) {
+    console.warn("Failed to clear cart from localStorage:", error)
+  }
   return []
 }
 

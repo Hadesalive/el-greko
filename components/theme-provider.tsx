@@ -33,9 +33,13 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(defaultTheme)
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem(storageKey) as Theme
-    if (storedTheme) {
-      setTheme(storedTheme)
+    try {
+      const storedTheme = localStorage.getItem(storageKey) as Theme
+      if (storedTheme) {
+        setTheme(storedTheme)
+      }
+    } catch (error) {
+      console.warn("Failed to get theme from localStorage:", error)
     }
   }, [storageKey])
 
@@ -43,7 +47,11 @@ export function ThemeProvider({
     const root = window.document.documentElement
     root.classList.remove("light", "dark")
     root.classList.add(theme)
-    localStorage.setItem(storageKey, theme)
+    try {
+      localStorage.setItem(storageKey, theme)
+    } catch (error) {
+      console.warn("Failed to save theme to localStorage:", error)
+    }
   }, [theme, storageKey])
 
   const value = {

@@ -914,6 +914,5 @@ export function recommendFoods(query: string, filters: RecommendationFilters): F
   return results.slice(0, 10);
 }
 
-export function getFoodItemById(id: number): FoodItem | undefined {
-  return foodDatabase.find(item => item.id === id);
-}
+// Removed getFoodItemById as it's a duplicate of getFoodById
+// Use getFoodById instead for consistency
